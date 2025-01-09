@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "todos")
+@Table(name = "tasks")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
-public class Todo {
+public class Task {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

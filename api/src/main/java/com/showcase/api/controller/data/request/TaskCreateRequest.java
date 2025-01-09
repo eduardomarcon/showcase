@@ -1,5 +1,6 @@
-package com.showcase.api.controller.data.response;
+package com.showcase.api.controller.data.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class TodoCreateResponse {
+public class TaskCreateRequest {
 
-	private Long id;
+	@NotEmpty(message = "title may not be empty")
 	private String title;
 	private String description;
 
