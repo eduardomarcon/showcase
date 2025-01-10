@@ -14,7 +14,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Testcontainers
-public class ControllerCommon {
+public class ControllerCommonIT {
 
 	@Autowired
 	protected MockMvc mockMvc;
