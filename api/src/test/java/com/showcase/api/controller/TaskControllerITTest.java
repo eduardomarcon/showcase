@@ -54,13 +54,33 @@ class TaskControllerITTest extends ControllerCommonIT {
 				.andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Task not found"));
 	}
 
-	private Task insertANewTask() {
+	@Test
+	void shouldReturnPaginatedTasks() throws Exception {
+		insertANewTask("Task 1");
+		insertANewTask("Task 2");
+		insertANewTask("Task 3");
+
+		mockMvc.perform(get("/tasks?page=0&size=2").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.data.content").isArray())
+				.andExpect(jsonPath("$.data.content.length()").value(2))
+				.andExpect(jsonPath("$.data.totalElements").value(3))
+				.andExpect(jsonPath("$.data.totalPages").value(2))
+				.andExpect(jsonPath("$.data.content[0].title").value("Task 1"))
+				.andExpect(jsonPath("$.data.content[1].title").value("Task 2"));
+	}
+
+	private Task insertANewTask(String title) {
 		var newTask = new Task();
-		newTask.setTitle("title");
+		newTask.setTitle(title);
 		newTask.setDescription("description");
 		newTask.setCompleted(true);
-
+	
 		return createTaskService.execute(newTask);
+	}
+
+	private Task insertANewTask() {
+		return insertANewTask("title");
 	}
 
 }
