@@ -4,7 +4,9 @@ import com.showcase.api.controller.data.mapper.TaskRestMapper;
 import com.showcase.api.controller.data.request.TaskCreateRequest;
 import com.showcase.api.controller.data.response.CommonResponse;
 import com.showcase.api.controller.data.response.TaskCreateResponse;
+import com.showcase.api.domain.model.Task;
 import com.showcase.api.domain.service.CreateTaskService;
+import com.showcase.api.domain.service.FetchTaskService;
 import com.showcase.api.domain.service.GetOneTaskService;
 import com.showcase.api.domain.service.UpdateCompletedTaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +33,14 @@ public class TaskController {
 	private final CreateTaskService createTaskService;
 	private final UpdateCompletedTaskService updateCompletedTaskService;
 	private final GetOneTaskService getOneTaskService;
+	private final FetchTaskService fetchTaskService;
 
 	public TaskController(CreateTaskService createTaskService, UpdateCompletedTaskService updateCompletedTaskService,
-						  GetOneTaskService getOneTaskService) {
+						  GetOneTaskService getOneTaskService, FetchTaskService fetchTaskService) {
 		this.createTaskService = createTaskService;
 		this.updateCompletedTaskService = updateCompletedTaskService;
 		this.getOneTaskService = getOneTaskService;
+		this.fetchTaskService = fetchTaskService;
 	}
 
 	@PostMapping
@@ -68,6 +75,16 @@ public class TaskController {
 	public ResponseEntity<CommonResponse> getTask(@PathVariable final Long id) {
 		var foundTask = getOneTaskService.byId(id);
 		var taskSearchResponse = taskMapper.toSearchResponse(foundTask);
+
+		return ResponseEntity.ok(new CommonResponse<>(taskSearchResponse));
+	}
+
+	@GetMapping
+	@Operation(summary = "Fetch all tasks", description = "Returns all tasks")
+	@ApiResponse(responseCode = "200", description = "Tasks found")
+	public ResponseEntity<CommonResponse> fetchTasks(@PageableDefault() Pageable pageable) {
+		Page<Task> fetchedTasks = fetchTaskService.execute(pageable);
+		var taskSearchResponse = fetchedTasks.map(taskMapper::toSearchResponse);
 
 		return ResponseEntity.ok(new CommonResponse<>(taskSearchResponse));
 	}
