@@ -9,6 +9,11 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      key-prefix: todos
 
 springdoc:
   api-docs:
