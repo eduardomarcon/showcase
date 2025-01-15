@@ -4,6 +4,7 @@ import com.showcase.api.domain.model.Task;
 import com.showcase.api.domain.repository.TaskRepository;
 import com.showcase.api.support.exception.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class GetOneTaskService {
 		this.repository = repository;
 	}
 
+	@Cacheable(value = "tasks", key = "#id")
 	public Task byId(Long id) {
 		log.info("getting TASK {}", id);
 
