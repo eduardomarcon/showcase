@@ -15,11 +15,13 @@ class UpdateCompletedTaskServiceTest {
 
 	private TaskRepository taskRepository;
 	private UpdateCompletedTaskService updateCompletedTaskService;
+	private SendMessageService sendMessageService;
 
 	@BeforeEach
 	void initialize() {
 		taskRepository = mock(TaskRepository.class);
-		updateCompletedTaskService = new UpdateCompletedTaskService(taskRepository);
+		sendMessageService = mock(SendMessageService.class);
+		updateCompletedTaskService = new UpdateCompletedTaskService(taskRepository, sendMessageService);
 	}
 
 	@Test
@@ -34,6 +36,7 @@ class UpdateCompletedTaskServiceTest {
 		updateCompletedTaskService.execute(idTask);
 
 		verify(taskRepository).save(mockTask);
+		verify(sendMessageService).taskCompleted(mockTask);
 	}
 
 	@Test
@@ -43,6 +46,8 @@ class UpdateCompletedTaskServiceTest {
 		when(taskRepository.findById(idTask)).thenReturn(Optional.empty());
 
 		assertThrows(EntityNotFoundException.class, () -> updateCompletedTaskService.execute(idTask));
+
+		verify(sendMessageService, never()).taskCompleted(any());
 	}
 
 }
