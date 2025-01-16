@@ -12,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCompletedTaskService {
 
 	private final TaskRepository repository;
+	private final SendMessageService sendMessageService;
 
-	public UpdateCompletedTaskService(TaskRepository repository) {
+	public UpdateCompletedTaskService(TaskRepository repository, SendMessageService sendMessageService) {
 		this.repository = repository;
+		this.sendMessageService = sendMessageService;
 	}
 
 	@Transactional
@@ -25,6 +27,8 @@ public class UpdateCompletedTaskService {
 
 		foundTask.setCompleted(!foundTask.isCompleted());
 		repository.save(foundTask);
+
+		sendMessageService.taskCompleted(foundTask);
 	}
 
 }
