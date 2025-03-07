@@ -39,7 +39,7 @@ class FetchTaskServiceTest {
 
 		when(taskRepository.findAll(pageable)).thenReturn(taskPage);
 
-		Page<Task> result = fetchTaskService.execute(pageable);
+		Page<Task> result = fetchTaskService.execute(pageable, null);
 
 		assertEquals(2, result.getContent().size());
 		assertEquals(2, result.getTotalElements());
@@ -53,7 +53,7 @@ class FetchTaskServiceTest {
 
 		when(taskRepository.findAll(pageable)).thenReturn(emptyPage);
 
-		Page<Task> result = fetchTaskService.execute(pageable);
+		Page<Task> result = fetchTaskService.execute(pageable, null);
 
 		assertEquals(0, result.getContent().size());
 		assertEquals(0, result.getTotalElements());
@@ -69,7 +69,7 @@ class FetchTaskServiceTest {
 
 		when(taskRepository.findAll(pageable)).thenReturn(taskPage);
 
-		Page<Task> result = fetchTaskService.execute(pageable);
+		Page<Task> result = fetchTaskService.execute(pageable, null);
 
 		assertEquals(2, result.getContent().size());
 		assertEquals(4, result.getTotalElements());
