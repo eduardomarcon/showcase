@@ -56,7 +56,7 @@ public class TaskController {
 		return new ResponseEntity<>(taskCreateResponse, HttpStatus.CREATED);
 	}
 
-	@PatchMapping("{id}/completed")
+	@PatchMapping("{id}/complete")
 	@Operation(summary = "Update a task", description = "Updates the completed field of the task with the given ID.")
 	@Parameter(name = "id", description = "The ID of the task", required = true, schema = @Schema(type = "integer", format = "int64"))
 	@ApiResponse(responseCode = "200", description = "Task updated successfully")
@@ -82,8 +82,9 @@ public class TaskController {
 	@GetMapping
 	@Operation(summary = "Fetch all tasks", description = "Returns all tasks")
 	@ApiResponse(responseCode = "200", description = "Tasks found")
-	public ResponseEntity<CommonResponse> fetchTasks(@PageableDefault() Pageable pageable) {
-		Page<Task> fetchedTasks = fetchTaskService.execute(pageable);
+	public ResponseEntity<CommonResponse> fetchTasks(@PageableDefault() Pageable pageable,
+													 @RequestParam(required = false) Boolean completed) {
+		Page<Task> fetchedTasks = fetchTaskService.execute(pageable, completed);
 		var taskSearchResponse = fetchedTasks.map(taskMapper::toSearchResponse);
 
 		return ResponseEntity.ok(new CommonResponse<>(taskSearchResponse));
