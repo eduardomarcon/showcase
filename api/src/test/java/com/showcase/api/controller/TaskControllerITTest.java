@@ -17,7 +17,7 @@ class TaskControllerITTest extends ControllerCommonIT {
 
 	@Test
 	void shouldInsertATask() throws Exception {
-		var taskCreateRequest = new TaskCreateRequest("title", "description");
+		var taskCreateRequest = new TaskCreateRequest("title", "description", 1L);
 
 		mockMvc
 				.perform(post("/tasks")

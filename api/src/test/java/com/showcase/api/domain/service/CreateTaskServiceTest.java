@@ -12,12 +12,14 @@ import static org.mockito.Mockito.when;
 class CreateTaskServiceTest {
 
 	private TaskRepository taskRepository;
+	private GetOneUserService getUserService;
 	private CreateTaskService createTaskService;
 
 	@BeforeEach
 	void initialize() {
 		taskRepository = mock(TaskRepository.class);
-		createTaskService = new CreateTaskService(taskRepository);
+		getUserService = mock(GetOneUserService.class);
+		createTaskService = new CreateTaskService(taskRepository, getUserService);
 	}
 
 	@Test
