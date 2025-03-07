@@ -20,7 +20,7 @@ public class FetchTaskService {
 	}
 
 	public Page<Task> execute(Pageable pageable, Boolean completed) {
-		Sort sort = Sort.by("createdAt").descending();
+		Sort sort = Sort.by("createdAt");
 		Pageable customPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
 		return repository.findByFilter(completed, customPageable);
