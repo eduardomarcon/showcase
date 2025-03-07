@@ -72,7 +72,7 @@ class TaskControllerITTest extends ControllerCommonIT {
 				.andExpect(jsonPath("$.data.content.length()").value(2))
 				.andExpect(jsonPath("$.data.totalElements").value(3))
 				.andExpect(jsonPath("$.data.totalPages").value(2))
-				.andExpect(jsonPath("$.data.content[0].title").value("Task 3"))
+				.andExpect(jsonPath("$.data.content[0].title").value("Task 1"))
 				.andExpect(jsonPath("$.data.content[1].title").value("Task 2"));
 	}
 

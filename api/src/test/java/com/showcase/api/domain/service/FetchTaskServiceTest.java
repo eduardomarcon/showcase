@@ -4,11 +4,7 @@ import com.showcase.api.domain.model.Task;
 import com.showcase.api.domain.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 class FetchTaskServiceTest {
 
 	private TaskRepository taskRepository;
@@ -31,15 +26,16 @@ class FetchTaskServiceTest {
 
 	@Test
 	void shouldReturnTasksForGivenPageableWhenTasksExist() {
-		Pageable pageable = PageRequest.of(0, 2);
+		Sort sort = Sort.by("createdAt");
+		Pageable pageable = PageRequest.of(0, 2, sort);
 		List<Task> tasks = Arrays.asList(
 				Task.builder().id(1L).title("task 1").description("description 1").completed(false).build(),
 				Task.builder().id(2L).title("task 2").description("description 2").completed(false).build());
 		Page<Task> taskPage = new PageImpl<>(tasks, pageable, 2);
 
-		when(taskRepository.findAll(pageable)).thenReturn(taskPage);
+		when(taskRepository.findByFilter(false, pageable)).thenReturn(taskPage);
 
-		Page<Task> result = fetchTaskService.execute(pageable, null);
+		Page<Task> result = fetchTaskService.execute(pageable, false);
 
 		assertEquals(2, result.getContent().size());
 		assertEquals(2, result.getTotalElements());
@@ -48,10 +44,11 @@ class FetchTaskServiceTest {
 
 	@Test
 	void shouldReturnEmptyPageWhenNoTasksExist() {
-		Pageable pageable = PageRequest.of(0, 2);
+		Sort sort = Sort.by("createdAt");
+		Pageable pageable = PageRequest.of(0, 2, sort);
 		Page<Task> emptyPage = Page.empty(pageable);
 
-		when(taskRepository.findAll(pageable)).thenReturn(emptyPage);
+		when(taskRepository.findByFilter(null, pageable)).thenReturn(emptyPage);
 
 		Page<Task> result = fetchTaskService.execute(pageable, null);
 
@@ -61,13 +58,14 @@ class FetchTaskServiceTest {
 
 	@Test
 	void shouldReturnCorrectPageWhenMoreThanOnePageExists() {
-		Pageable pageable = PageRequest.of(1, 2);
+		Sort sort = Sort.by("createdAt");
+		Pageable pageable = PageRequest.of(1, 2, sort);
 		List<Task> tasks = Arrays.asList(
 				Task.builder().id(3L).title("task 3").description("description 3").completed(true).build(),
 				Task.builder().id(4L).title("task 4").description("description 4").completed(false).build());
 		Page<Task> taskPage = new PageImpl<>(tasks, pageable, 4);
 
-		when(taskRepository.findAll(pageable)).thenReturn(taskPage);
+		when(taskRepository.findByFilter(null, pageable)).thenReturn(taskPage);
 
 		Page<Task> result = fetchTaskService.execute(pageable, null);
 
