@@ -4,7 +4,9 @@ import com.showcase.api.domain.model.Task;
 import com.showcase.api.domain.repository.TaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,12 +19,11 @@ public class FetchTaskService {
 		this.repository = repository;
 	}
 
-	public Page<Task> execute(Pageable pageable) {
-		log.info("Fetching TASKs with pagination: page number = {}, page size = {}", pageable.getPageNumber(),
-				 pageable.getPageSize());
-		Page<Task> tasks = repository.findAll(pageable);
-		log.info("Fetched {} task(s), total elements = {}", tasks.getContent().size(), tasks.getTotalElements());
-		return tasks;
+	public Page<Task> execute(Pageable pageable, Boolean completed) {
+		Sort sort = Sort.by("createdAt").descending();
+		Pageable customPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+		return repository.findByFilter(completed, customPageable);
 	}
 
 }
