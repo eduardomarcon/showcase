@@ -2,7 +2,10 @@ package com.showcase.api.controller;
 
 import com.showcase.api.controller.data.request.TaskCreateRequest;
 import com.showcase.api.domain.model.Task;
+import com.showcase.api.domain.model.User;
+import com.showcase.api.domain.model.enums.UserRole;
 import com.showcase.api.domain.service.CreateTaskService;
+import com.showcase.api.domain.service.CreateUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +14,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TaskControllerITTest extends ControllerCommonIT {
+
+	@Autowired
+	private CreateUserService createUserService;
 
 	@Autowired
 	private CreateTaskService createTaskService;
@@ -31,7 +37,7 @@ class TaskControllerITTest extends ControllerCommonIT {
 		var createdTask = insertANewTask();
 
 		mockMvc
-				.perform(patch("/tasks/" + createdTask.getId() + "/completed"))
+				.perform(patch("/tasks/" + createdTask.getId() + "/complete"))
 				.andExpect(status().isOk());
 	}
 
@@ -66,8 +72,19 @@ class TaskControllerITTest extends ControllerCommonIT {
 				.andExpect(jsonPath("$.data.content.length()").value(2))
 				.andExpect(jsonPath("$.data.totalElements").value(3))
 				.andExpect(jsonPath("$.data.totalPages").value(2))
-				.andExpect(jsonPath("$.data.content[0].title").value("Task 1"))
+				.andExpect(jsonPath("$.data.content[0].title").value("Task 3"))
 				.andExpect(jsonPath("$.data.content[1].title").value("Task 2"));
+	}
+
+	private User insertANewUser() {
+		var newUser = new User();
+		newUser.setUsername("testUser");
+		newUser.setPassword("securePassword");
+		newUser.setEmail("testuser@example.com");
+		newUser.setActive(true);
+		newUser.setRole(UserRole.USER);
+
+		return createUserService.execute(newUser);
 	}
 
 	private Task insertANewTask(String title) {
@@ -75,6 +92,7 @@ class TaskControllerITTest extends ControllerCommonIT {
 		newTask.setTitle(title);
 		newTask.setDescription("description");
 		newTask.setCompleted(true);
+		newTask.setUser(insertANewUser());
 	
 		return createTaskService.execute(newTask);
 	}
