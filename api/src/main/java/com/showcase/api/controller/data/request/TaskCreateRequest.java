@@ -13,6 +13,7 @@ public class TaskCreateRequest {
 
 	@NotEmpty(message = "title may not be empty")
 	private String title;
+	@NotEmpty(message = "description may not be empty")
 	private String description;
 	@Positive(message = "user must be valid")
 	private Long userId;
