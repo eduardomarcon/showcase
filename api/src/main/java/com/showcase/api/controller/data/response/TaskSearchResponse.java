@@ -14,5 +14,6 @@ public class TaskSearchResponse {
 	private String description;
 	private boolean completed;
 	private String createdAt;
+	private Long userId;
 
 }

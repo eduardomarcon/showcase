@@ -10,13 +10,16 @@ import org.springframework.stereotype.Service;
 public class CreateTaskService {
 
 	private final TaskRepository repository;
+	private final GetOneUserService getOneUserService;
 
-	public CreateTaskService(TaskRepository repository) {
+	public CreateTaskService(TaskRepository repository, GetOneUserService getOneUserService) {
 		this.repository = repository;
+		this.getOneUserService = getOneUserService;
 	}
 
 	public Task execute(Task newTask) {
-		log.info("inserting TASK {}", newTask.toString());
+		getOneUserService.byId(newTask.getUser().getId());
+		log.info("inserting TASK {}", newTask);
 		return repository.save(newTask);
 	}
 
